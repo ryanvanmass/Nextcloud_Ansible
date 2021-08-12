@@ -6,7 +6,7 @@
       - name: Download Docker Install Script
         git:
           repo: https://github.com/docker/docker-install
-          dest: /root
+          dest: /root/docker-install
       - name: Install Docker Install Script
         shell: sh /root/docker-install/install.sh
 
