@@ -16,7 +16,32 @@
     tasks:
       - name: Pull Nextcloud from Docker Hub
         shell: docker pull nextcloud
-
+  
+# Set up Automatic Backup for Nextcloud Container
+  - name: Configure Nextcloud Backup
+    hosts: localhost
+    tasks:
+      - name: Create Log Directory
+        file:
+          path: /var/log/Nextcloud_Backup
+          state: directory
+      - name: Create Backup Directory
+        file:
+          path: /mnt/Backup/Nextcloud
+          state: directory
+      - name: Copy Backup Service
+        shell: cp $PWD/Services/Nextcloud_Backup.service /etc/systemd/system
+      - name: Copy Backup Timer
+        shell: cp $PWD/Services/Nextcloud_Backup.timer /etc/systemd/system
+      - name: Reload Systemd
+        systemd:
+          daemon_reload: yes
+      - name: Enable Backup Timer
+        systemd:
+          name: Nextcloud_Backup.timer
+          enabled: yes
+          state: started
+          
 # Firewall Setup  
   - name: UFW Setup
     hosts: localhost
@@ -46,6 +71,10 @@
       - name: Copy Timer
         shell: cp $PWD/Services/CoreUtil.timer /etc/systemd/system
       - name: Reload SystemD
-        shell: systemctl daemon-reload
+        systemd:
+          daemon_reload: yes
       - name: Starting the Timer
-        shell: systemctl enable --now CoreUtil.timer
+        systemd:
+          name: CoreUtil.timer
+          state: started
+          enabled: yes
