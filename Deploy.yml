@@ -1,0 +1,51 @@
+---
+# Install Docker from the Install Script provided by Docker
+  - name: Install Docker
+    hosts: localhost
+    tasks:
+      - name: Download Docker Install Script
+        git:
+          repo: https://github.com/docker/docker-install
+          dest: /root
+      - name: Install Docker Install Script
+        shell: sh /root/docker-install/install.sh
+
+# Download Nextcloud from Docker Hub
+  - name: Nextcloud Setup
+    hosts: localhost
+    tasks:
+      - name: Pull Nextcloud from Docker Hub
+        shell: docker pull nextcloud
+
+# Firewall Setup  
+  - name: UFW Setup
+    hosts: localhost
+    tasks:
+      - name: Set Default Profiles
+        shell: ufw default deny incoming && ufw default allow outgoing
+      - name: Allow SSH
+        ufw:
+          rule: limit
+          port: ssh
+          proto: tcp
+      - name: Allow port 8080 for Nextcloud
+        ufw:
+          rule: allow
+          port: 8080
+          proto: tcp
+          comment: Allowed for Nextcloud
+      - name: Enable UFW
+        shell: ufw enable
+
+# Set CoreUtil Playbook to auto run every hour
+  - name: CoreUtil Playbook setup
+    hosts: localhost
+    tasks:
+      - name: Copy Service
+        shell: cp $PWD/Services/CoreUtil.service /etc/systemd/system
+      - name: Copy Timer
+        shell: cp $PWD/Services/CoreUtil.timer /etc/systemd/system
+      - name: Reload SystemD
+        shell: systemctl daemon-reload
+      - name: Starting the Timer
+        shell: systemctl enable --now CoreUtil.timer

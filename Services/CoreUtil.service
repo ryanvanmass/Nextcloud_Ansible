@@ -1,0 +1,7 @@
+[Unit]
+Description=CoreUtil
+
+[Service]
+Type=oneshot
+ExecStart=ansible-pull -U https://github.com/ryanvanmass/CoreUtil_Ansible -C digitalocean Deploy.yml
+WorkingDirectory=/
