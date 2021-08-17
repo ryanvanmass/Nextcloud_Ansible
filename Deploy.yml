@@ -16,6 +16,8 @@
     tasks:
       - name: Pull Nextcloud from Docker Hub
         shell: docker pull nextcloud
+      - name: Start Nextcloud Container
+        shell: docker run -d -p 8080:80 -v /mnt:/mnt --name NextCloud nextcloud  
   
 # Set up Automatic Backup for Nextcloud Container
   - name: Configure Nextcloud Backup
@@ -29,6 +31,7 @@
         file:
           path: /mnt/Backup/Nextcloud
           state: directory
+          mode: '0777'
       - name: Copy Backup Service
         shell: cp $PWD/Services/Nextcloud_Backup.service /etc/systemd/system
       - name: Copy Backup Timer
