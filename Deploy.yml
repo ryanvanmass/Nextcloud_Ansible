@@ -1,83 +1,68 @@
 ---
-# Install Docker from the Install Script provided by Docker
-  - name: Install Docker
+### Install Dependancies ###
+  - name: Install Depandancies
     hosts: localhost
     tasks:
-      - name: Download Docker Install Script
-        git:
-          repo: https://github.com/docker/docker-install
-          dest: /root/docker-install
-      - name: Install Docker Install Script
-        shell: sh /root/docker-install/install.sh
+      - name: LAMP Stack
+        zypper:
+          name:
+            - apache2
+            - php7
+            - php7-mysql
+            - apache2-mod_php7
 
-# Download Nextcloud from Docker Hub
-  - name: Nextcloud Setup
-    hosts: localhost
-    tasks:
-      - name: Pull Nextcloud from Docker Hub
-        shell: docker pull nextcloud
-      - name: Start Nextcloud Container
-        shell: docker run -d -p 8080:80 -v /mnt:/mnt --name NextCloud nextcloud  
-  
-# Set up Automatic Backup for Nextcloud Container
-  - name: Configure Nextcloud Backup
-    hosts: localhost
-    tasks:
-      - name: Create Log Directory
-        file:
-          path: /var/log/Nextcloud_Backup
-          state: directory
-      - name: Create Backup Directory
-        file:
-          path: /mnt/Backup/Nextcloud
-          state: directory
-          mode: '0777'
-      - name: Copy Backup Service
-        shell: cp $PWD/Services/Nextcloud_Backup.service /etc/systemd/system
-      - name: Copy Backup Timer
-        shell: cp $PWD/Services/Nextcloud_Backup.timer /etc/systemd/system
-      - name: Reload Systemd
-        systemd:
-          daemon_reload: yes
-      - name: Enable Backup Timer
-        systemd:
-          name: Nextcloud_Backup.timer
-          enabled: yes
-          state: started
-          
-# Firewall Setup  
-  - name: UFW Setup
-    hosts: localhost
-    tasks:
-      - name: Set Default Profiles
-        shell: ufw default deny incoming && ufw default allow outgoing
-      - name: Allow SSH
-        ufw:
-          rule: limit
-          port: ssh
-          proto: tcp
-      - name: Allow port 8080 for Nextcloud
-        ufw:
-          rule: allow
-          port: 8080
-          proto: tcp
-          comment: Allowed for Nextcloud
-      - name: Enable UFW
-        shell: ufw enable
 
-# Set CoreUtil Playbook to auto run every hour
-  - name: CoreUtil Playbook setup
+### Configuring LAMP Stack ###
+  - name: Configure LAMP Stack
     hosts: localhost
     tasks:
-      - name: Copy Service
-        shell: cp $PWD/Services/CoreUtil.service /etc/systemd/system
-      - name: Copy Timer
-        shell: cp $PWD/Services/CoreUtil.timer /etc/systemd/system
-      - name: Reload SystemD
+      - name: enable php7 apache mod
+        shell: a2enmod php7
+      - name: Add php mod to apache file
+        shell: echo "AddType application/x-httpd-php .php" >> /etc/apache2/mime-defaults.conf
+      - name: enable apache2 service
         systemd:
-          daemon_reload: yes
-      - name: Starting the Timer
-        systemd:
-          name: CoreUtil.timer
-          state: started
+          name: apache2
+          state: restarted
           enabled: yes
+      - name: Enable MariaDB Service
+        systemd:
+          name: mysql
+          state: restarted
+          enabled: yes
+
+
+
+
+### Configure MariaDB ###
+  - name: Configure Nextcloud Database
+    hosts: localhost
+    tasks:
+      - name: Create Database
+      
+
+
+
+
+
+
+
+### Configure Firewall ###
+
+
+
+
+
+
+
+
+### Configure Fail2Ban ###
+
+
+
+
+
+
+
+
+### Configure Backup Service ###
