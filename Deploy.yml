@@ -1,6 +1,6 @@
 ---
 ### Install Dependancies ###
-  - name: Install Depandancies
+  - name: Install Dependancies
     hosts: localhost
     tasks:
       - name: LAMP Stack
@@ -10,7 +10,13 @@
             - php7
             - php7-mysql
             - apache2-mod_php7
-
+          state: present
+      - name: Misc Dependancies
+        zypper:
+          name:
+            - firewalld
+            - fail2ban
+          state: present
 
 ### Configuring LAMP Stack ###
   - name: Configure LAMP Stack
@@ -46,6 +52,17 @@
         shell: mysql -u root -e "create user nextclouduser@localhost identified by 'some-password-here'"
 
 ### Install Nextcloud ###
+  - name: Install and Prep Nextcloud
+    hosts: localhost
+    tasks:
+      - name: Install Nextcloud
+        zypper:
+          name: nextcloud
+          state: present
+      - name: restart apache
+        systemd:
+          name: apache2
+          state: restarted
 
 
 
@@ -54,7 +71,15 @@
 
 
 ### Configure Firewall ###
-
+  - name: Configure FIrewall
+    hosts: localhost
+    tasks:
+      - name: Open Firewall for apache
+        firewalld:
+          service: apache2
+          permanent: yes
+          state: enabled
+          immediate: yes
 
 
 
