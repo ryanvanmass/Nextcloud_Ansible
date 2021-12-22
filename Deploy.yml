@@ -39,7 +39,13 @@
     hosts: localhost
     tasks:
       - name: Create Database
-      
+        shell: mysql -u root -e "create database nextcloud"
+      - name: Create Nextcloud User
+        shell: mysql -u root -e "create user nextclouduser@localhost identified by 'some-password-here'"
+      - name: Set Security permissions for Nextcloud user
+        shell: mysql -u root -e "create user nextclouduser@localhost identified by 'some-password-here'"
+
+### Install Nextcloud ###
 
 
 
