@@ -88,9 +88,21 @@
 
 
 ### Configure Fail2Ban ###
+  - name: Configuring Fail2Ban
+    hosts: localhost
+    tasks:
+      - name: Configure Nextcloud log filtering
+        shell: cp $PWD/Config_Files/nextcloud.conf /etc/fail2pan/filter.d/
+      - name: Configure Nextcloud Jail
+        shell: cp $PWD/Config_Files/nextcloud.local /etc/fail2pan/jail.d/
+      - name: Configure SSH Jail
+        shell: rm cp $PWD/Config_Files/nextcloud.conf /etc/fail2pan/jail.local && cp $PWD/Config_Files/nextcloud.conf /etc/fail2pan/jail.local
 
-
-
+      - name: Restart Service
+        systemd:
+          name: fail2ban
+          state: restarted
+          enabled: yes        
 
 
 
