@@ -19,6 +19,11 @@
             - firewalld
             - fail2ban
           state: present
+      - name: Start Firewall
+        systemd:
+          name: firewalld
+          state: restarted
+          enabled: yes
 
 
 
