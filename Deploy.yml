@@ -106,11 +106,11 @@
     hosts: localhost
     tasks:
       - name: Configure Nextcloud log filtering
-        shell: cp $PWD/Config_Files/nextcloud.conf /etc/fail2pan/filter.d/
+        shell: cp $PWD/Config_Files/nextcloud.conf /etc/fail2ban/filter.d/
       - name: Configure Nextcloud Jail
-        shell: cp $PWD/Config_Files/nextcloud.local /etc/fail2pan/jail.d/
+        shell: cp $PWD/Config_Files/nextcloud.local /etc/fail2ban/jail.d/
       - name: Configure SSH Jail
-        shell: rm cp $PWD/Config_Files/nextcloud.conf /etc/fail2pan/jail.local && cp $PWD/Config_Files/nextcloud.conf /etc/fail2pan/jail.local
+        shell: rm cp $PWD/Config_Files/nextcloud.conf /etc/fail2ban/jail.local && cp $PWD/Config_Files/nextcloud.conf /etc/fail2pan/jail.local
 
       - name: Restart Service
         systemd:
