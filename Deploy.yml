@@ -54,7 +54,7 @@
       - name: Create Nextcloud User
         shell: mysql -u root -e "create user nextclouduser@localhost identified by 'some-password-here'"
       - name: Set Security permissions for Nextcloud user
-        shell: mysql -u root -e "create user nextclouduser@localhost identified by 'some-password-here'"
+        shell: mysql -u root -e "grant all privileges on nextcloud.* to nextclouduser@localhost identified by 'some-password-here'"
 
 
 
