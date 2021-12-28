@@ -122,23 +122,23 @@
 
 
 ### Configure Backup Service ###
-  - name: Configure Nextcloud Backup
-    hosts: localhost
-    tasks:
-      - name: Create Backup Directory
-        file:
-          path: /mnt/Backup/
-          state: directory
-          mode: '0777'
-      - name: Copy Backup Service
-        shell: cp $PWD/Services/Nextcloud_Backup.service /etc/systemd/system/
-      - name: Copy Backup Timer
-        shell: cp $PWD/Services/Nextcloud_Backup.timer /etc/systemd/system/
-      - name: Reload Systemd
-        systemd:
-          daemon_reload: yes
-      - name: Enable Backup Timer
-        systemd:
-          name: Nextcloud_Backup.timer
-          enabled: yes
-          state: started
+#  - name: Configure Nextcloud Backup
+#    hosts: localhost
+#    tasks:
+#      - name: Create Backup Directory
+#        file:
+#          path: /mnt/Backup/
+#          state: directory
+#          mode: '0777'
+#      - name: Copy Backup Service
+#        shell: cp $PWD/Services/Nextcloud_Backup.service /etc/systemd/system/
+#      - name: Copy Backup Timer
+#        shell: cp $PWD/Services/Nextcloud_Backup.timer /etc/systemd/system/
+#      - name: Reload Systemd
+#        systemd:
+#          daemon_reload: yes
+#      - name: Enable Backup Timer
+#        systemd:
+#          name: Nextcloud_Backup.timer
+#          enabled: yes
+#          state: started
