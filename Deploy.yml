@@ -131,9 +131,9 @@
           state: directory
           mode: '0777'
       - name: Copy Backup Service
-        shell: cp $PWD/Services/Nextcloud_Backup.service /etc/systemd/system
+        shell: cp $PWD/Services/Nextcloud_Backup.service /etc/systemd/system/
       - name: Copy Backup Timer
-        shell: cp $PWD/Services/Nextcloud_Backup.timer /etc/systemd/system
+        shell: cp $PWD/Services/Nextcloud_Backup.timer /etc/systemd/system/
       - name: Reload Systemd
         systemd:
           daemon_reload: yes
