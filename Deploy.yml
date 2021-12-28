@@ -110,7 +110,7 @@
       - name: Configure Nextcloud Jail
         shell: cp $PWD/Config_Files/nextcloud.local /etc/fail2ban/jail.d/
       - name: Configure SSH Jail
-        shell: rm /etc/fail2ban/jail.local && cp $PWD/Config_Files/jail.local /etc/fail2pan/
+        shell: rm /etc/fail2ban/jail.local && cp $PWD/Config_Files/jail.local /etc/fail2ban/
       - name: Restart Service
         systemd:
           name: fail2ban
