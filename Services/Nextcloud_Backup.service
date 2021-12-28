@@ -6,7 +6,7 @@ Type=oneshot
 User=root
 ExecStart=sh -c 'sudo -u wwwrun php occ maintenance:mode --on'
 ExecStart=sh -c 'rsync -Aavx /srv/www/htdocs/nextcloud/ /mnt/Backup/`date +"%Y%m%d"`/'
-ExecStart=sh -c 'mysqldump --single-transaction -h localhost -u nextclouduser -p some-password-here nextcloud > /mnt/Backup/`date +"%Y%m%d"`/nextcloud-sqlbkp_`date +"%Y%m%d"`.bak'
+ExecStart=sh -c 'mysqldump --single-transaction -h localhost -u nextclouduser -p 'some-password-here nextcloud' > /mnt/Backup/`date +"%Y%m%d"`/nextcloud-sqlbkp_`date +"%Y%m%d"`.bak'
 ExecStart=sh -c 'sudo -u wwwrun php occ maintenance:mode --off'
 
 WorkingDirectory=/srv/www/htdocs/nextcloud
