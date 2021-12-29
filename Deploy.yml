@@ -137,4 +137,4 @@
           name: "Nextcloud Backup"
           minute: "0"
           hour: "2"
-          job: "/srv/www/htdocs/Nextcloud_Backup.sh"
+          job: "/srv/www/htdocs/nextcloud/Nextcloud_Backup.sh"
