@@ -130,15 +130,11 @@
           path: /mnt/Backup/
           state: directory
           mode: '0777'
-      - name: Copy Backup Service
-        shell: cp $PWD/Services/Nextcloud_Backup.service /etc/systemd/system/
-      - name: Copy Backup Timer
-        shell: cp $PWD/Services/Nextcloud_Backup.timer /etc/systemd/system/
-      - name: Reload Systemd
-        systemd:
-          daemon_reload: yes
-#      - name: Enable Backup Timer
-#        systemd:
-#          name: Nextcloud_Backup.timer
-#          enabled: yes
-#          state: started
+      - name: Copy Backup Script
+        shell: cp $PWD/Services/Nextcloud_Backup.sh /src/www/htdocs/nextcloud
+      - name: Create Cron job to backup nextcloud at 2am daily
+        cron:
+          name: "Nextcloud Backup"
+          minute: "0"
+          hour: "2"
+          job: "/srv/www/htdocs/Nextcloud_Backup.sh"
