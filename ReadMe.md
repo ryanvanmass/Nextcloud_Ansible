@@ -1,22 +1,39 @@
 # Description
-Easily Deploy a Nextcloud Server via Docker.
+Easily Deploy a Nextcloud Server on OpenSuse.
 
 # Syntax to run
 ```
-    apt install ansible
-    ansible-pull -U https://github.com/ryanvanmass/Nextcloud_Ansible Deploy.yml
+    zypper install ansible git
+    ansible-pull -U https://github.com/ryanvanmass/Nextcloud_Ansible -c main Deploy.yml
+    sudo -u wwwrun php /srv/www/htdocs/nextcloud/occ config:system:set trusted_domains 0 --value=$URL
 ```
 
 # Nextcloud Configuration
-- Links port 8080 to 80
-- Mounts the /mnt directory of the host system to /mnt on the docker container
-  - This is to allow you to access any Network Shares mounted on the Host system via Nextcloud
-- Names the Container NextCloud
+## Default User Credentials
+
+**Username:** admin
+
+**Password:** password
+
+## Database Credentials
+
+**User:**: nextclouduser
+
+**Password:** some-password-here
+
+**Database:** nextcloud
 
 # Additional Configuration
-- UFW Configured
-  - | Port | State   | Purpose   |
-    |------|---------|-----------|
-    | 22   | Limited | SSH       |
-    | 8080 | Allowed | Nextcloud |
-- There is a systemd Service configured to automatically backup the Nextcloud Container to `/mnt/Backup/Nextcloud`
+## Fail2ban
+Fail2ban is configured for the following:
+* SSH
+* Nextcloud
+
+## Firewalld Configured
+| Port/Service | State   | Purpose   |
+|--------------|---------|-----------|
+| SSH          | Limited |           |
+| Apache       | Limited | Nextcloud |
+
+## Nextcloud Backup Service
+ There is a cron job configured to automatically backup both the entire Nextcloud directly and the Database daily at 2am

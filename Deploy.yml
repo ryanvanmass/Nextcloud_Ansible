@@ -1,83 +1,142 @@
 ---
-# Install Docker from the Install Script provided by Docker
-  - name: Install Docker
+### Install Dependancies ###
+  - name: Install Dependancies
     hosts: localhost
     tasks:
-      - name: Download Docker Install Script
-        git:
-          repo: https://github.com/docker/docker-install
-          dest: /root/docker-install
-      - name: Install Docker Install Script
-        shell: sh /root/docker-install/install.sh
+      - name: LAMP Stack
+        zypper:
+          name:
+            - apache2
+            - php7
+            - php7-mysql
+            - apache2-mod_php7
+            - mariadb
+            - mariadb-tools
+          state: present
+      - name: Misc Dependancies
+        zypper:
+          name:
+            - firewalld
+            - fail2ban
+          state: present
+      - name: Start Firewall
+        systemd:
+          name: firewalld
+          state: restarted
+          enabled: yes
 
-# Download Nextcloud from Docker Hub
-  - name: Nextcloud Setup
+
+
+
+### Configuring LAMP Stack ###
+  - name: Configure LAMP Stack
     hosts: localhost
     tasks:
-      - name: Pull Nextcloud from Docker Hub
-        shell: docker pull nextcloud
-      - name: Start Nextcloud Container
-        shell: docker run -d -p 8080:80 -v /mnt:/mnt --name NextCloud nextcloud  
-  
-# Set up Automatic Backup for Nextcloud Container
+      - name: enable php7 apache mod
+        shell: a2enmod php7
+      - name: Add php mod to apache file
+        shell: echo "AddType application/x-httpd-php .php" >> /etc/apache2/mime-defaults.conf
+      - name: enable apache2 service
+        systemd:
+          name: apache2
+          state: restarted
+          enabled: yes
+      - name: Enable MariaDB Service
+        systemd:
+          name: mysql
+          state: restarted
+          enabled: yes
+
+
+
+
+### Configure MariaDB ###
+  - name: Configure Nextcloud Database
+    hosts: localhost
+    tasks:
+      - name: Create Database
+        shell: mysql -u root -e "create database nextcloud"
+      - name: Create Nextcloud User
+        shell: mysql -u root -e "create user nextclouduser@localhost identified by 'some-password-here'"
+      - name: Set Security permissions for Nextcloud user
+        shell: mysql -u root -e "grant all privileges on nextcloud.* to nextclouduser@localhost identified by 'some-password-here'"
+
+
+
+
+
+### Install Nextcloud ###
+  - name: Install and Prep Nextcloud
+    hosts: localhost
+    tasks:
+      - name: Install Nextcloud
+        zypper:
+          name: nextcloud
+          state: present
+      - name: restart apache
+        systemd:
+          name: apache2
+          state: restarted
+      - name: Configure Nextcloud
+        shell: sudo -u wwwrun php /srv/www/htdocs/nextcloud/occ maintenance:install --database mysql --database-name nextcloud --database-host localhost --database-port 5432 --database-user nextclouduser  --database-pass 'some-password-here' --admin-user admin --admin-pass password && sudo -u wwwrun php /srv/www/htdocs/nextcloud/occ config:system:set trusted_domains 0 --value=0.0.0.0
+
+
+
+
+
+### Configure Firewall ###
+  - name: Configure FIrewall
+    hosts: localhost
+    tasks:
+      - name: Open Firewall for apache
+        firewalld:
+          service: apache2
+          permanent: yes
+          state: enabled
+          immediate: yes
+
+
+
+
+
+
+
+### Configure Fail2Ban ###
+  - name: Configuring Fail2Ban
+    hosts: localhost
+    tasks:
+      - name: Configure Nextcloud log filtering
+        shell: cp $PWD/Config_Files/nextcloud.conf /etc/fail2ban/filter.d/
+      - name: Configure Nextcloud Jail
+        shell: cp $PWD/Config_Files/nextcloud.local /etc/fail2ban/jail.d/
+      - name: Configure SSH Jail
+        shell: rm /etc/fail2ban/jail.local && cp $PWD/Config_Files/jail.local /etc/fail2ban/
+      - name: Restart Service
+        systemd:
+          name: fail2ban
+          state: restarted
+          enabled: yes        
+
+
+
+
+
+### Configure Backup Service ###
   - name: Configure Nextcloud Backup
     hosts: localhost
     tasks:
-      - name: Create Log Directory
-        file:
-          path: /var/log/Nextcloud_Backup
-          state: directory
       - name: Create Backup Directory
         file:
-          path: /mnt/Backup/Nextcloud
+          path: /mnt/Backup/
           state: directory
           mode: '0777'
-      - name: Copy Backup Service
-        shell: cp $PWD/Services/Nextcloud_Backup.service /etc/systemd/system
-      - name: Copy Backup Timer
-        shell: cp $PWD/Services/Nextcloud_Backup.timer /etc/systemd/system
-      - name: Reload Systemd
-        systemd:
-          daemon_reload: yes
-      - name: Enable Backup Timer
-        systemd:
-          name: Nextcloud_Backup.timer
-          enabled: yes
-          state: started
-          
-# Firewall Setup  
-  - name: UFW Setup
-    hosts: localhost
-    tasks:
-      - name: Set Default Profiles
-        shell: ufw default deny incoming && ufw default allow outgoing
-      - name: Allow SSH
-        ufw:
-          rule: limit
-          port: ssh
-          proto: tcp
-      - name: Allow port 8080 for Nextcloud
-        ufw:
-          rule: allow
-          port: 8080
-          proto: tcp
-          comment: Allowed for Nextcloud
-      - name: Enable UFW
-        shell: ufw enable
-
-# Set CoreUtil Playbook to auto run every hour
-  - name: CoreUtil Playbook setup
-    hosts: localhost
-    tasks:
-      - name: Copy Service
-        shell: cp $PWD/Services/CoreUtil.service /etc/systemd/system
-      - name: Copy Timer
-        shell: cp $PWD/Services/CoreUtil.timer /etc/systemd/system
-      - name: Reload SystemD
-        systemd:
-          daemon_reload: yes
-      - name: Starting the Timer
-        systemd:
-          name: CoreUtil.timer
-          state: started
-          enabled: yes
+      - name: Copy Backup Script
+        shell: cp $PWD/Services/Nextcloud_Backup.sh /srv/www/htdocs/nextcloud
+      - name: Make Backup Script Executable
+        shell: chmod +x /srv/www/htdocs/nextcloud/Nextcloud_Backup.sh
+      - name: Create Cron job to backup nextcloud at 2am daily
+        cron:
+          name: "Nextcloud Backup"
+          minute: "0"
+          hour: "2"
+          job: "/srv/www/htdocs/nextcloud/Nextcloud_Backup.sh"
