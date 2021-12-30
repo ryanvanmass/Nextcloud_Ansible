@@ -132,6 +132,8 @@
           mode: '0777'
       - name: Copy Backup Script
         shell: cp $PWD/Services/Nextcloud_Backup.sh /srv/www/htdocs/nextcloud
+      - name: Make Backup Script Executable
+        shell: chmod +x /srv/www/htdocs/nextcloud/Nextcloud_Backup.sh
       - name: Create Cron job to backup nextcloud at 2am daily
         cron:
           name: "Nextcloud Backup"
