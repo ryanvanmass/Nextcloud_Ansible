@@ -1,6 +1,7 @@
 ---
 ## Set Variables ###  - hosts: localhost
-   tasks:
+  - hosts: localhost 
+    tasks:
     - set_fact: db_password='password'
     - set_fact: nextcloud_user='admin'
     - set_fact: nextcloud_password='password'
