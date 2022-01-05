@@ -73,8 +73,8 @@
         mysql_user:
           state: present
           name: nextclouduser
-          password: {{db_password}}
-          priv: 'nextcloud.*': 'ALL,GRANT'
+          password: "{{db_password}}"
+          priv: 'nextcloud.*:ALL,GRANT'
 
 
 
