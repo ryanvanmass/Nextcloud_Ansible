@@ -1,4 +1,12 @@
 ---
+### Set Variables ###
+  - hosts: localhost
+    tasks:
+    - set_fact: db_password=''
+    - set_fact: nextcloud_user=''
+    - set_fact: nextcloud_password=''
+
+
 ### Install Dependancies ###
   - name: Install Dependancies
     hosts: localhost
