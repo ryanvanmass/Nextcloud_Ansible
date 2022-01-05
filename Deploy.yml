@@ -65,10 +65,6 @@
     tasks:
       - name: Create Database
         shell: mysql -u root -e "create database nextcloud"
-#      - name: Create Nextcloud User
-#        shell: mysql -u root -e "create user nextclouduser@localhost identified by {{db_password}}"
-#      - name: Set Security permissions for Nextcloud user
-#        shell: mysql -u root -e "grant all privileges on nextcloud.* to nextclouduser@localhost identified by {{db_password}}"
       - name: Create User
         mysql_user:
           state: present
