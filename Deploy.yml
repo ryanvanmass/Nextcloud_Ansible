@@ -96,7 +96,7 @@
           name: apache2
           state: restarted
       - name: Configure Nextcloud
-        shell: sudo -u wwwrun php /srv/www/htdocs/nextcloud/occ maintenance:install --database mysql --database-name nextcloud --database-host localhost --database-port 5432 --database-user nextclouduser  --database-pass {{db_password}} --admin-user {{nextcloud_user}} --admin-pass {{nextcloud_password}} && sudo -u wwwrun php /srv/www/htdocs/nextcloud/occ config:system:set trusted_domains 0 --value={{nextcloud_url}}
+        shell: sudo sudo -u wwwrun php /srv/www/htdocs/nextcloud/occ maintenance:install --database mysql --database-name nextcloud --database-host localhost --database-port 5432 --database-user nextclouduser  --database-pass {{db_password}} --admin-user {{nextcloud_user}} --admin-pass {{nextcloud_password}} && sudo sudo -u wwwrun php /srv/www/htdocs/nextcloud/occ config:system:set trusted_domains 0 --value={{nextcloud_url}}
 
 
 
