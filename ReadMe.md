@@ -3,27 +3,16 @@ Easily Deploy a Nextcloud Server on OpenSuse.
 
 # Syntax to run
 ```
-    zypper install ansible git
-    ansible-pull -U https://github.com/ryanvanmass/Nextcloud_Ansible -c main Deploy.yml
-    sudo -u wwwrun php /srv/www/htdocs/nextcloud/occ config:system:set trusted_domains 0 --value=$URL
+   # Clone Repo
+   git clone https://github.com/ryavanmass/nextcloud_ansible
+   
+   # Configure your Credentials in the Variables at the top of Deploy.yml
+   nano Deploy.yml
+
+   sudo ansible-playbook Deploy.yml
 ```
 
-# Nextcloud Configuration
-## Default User Credentials
-
-**Username:** admin
-
-**Password:** password
-
-## Database Credentials
-
-**User:**: nextclouduser
-
-**Password:** some-password-here
-
-**Database:** nextcloud
-
-# Additional Configuration
+# Configuration
 ## Fail2ban
 Fail2ban is configured for the following:
 * SSH
