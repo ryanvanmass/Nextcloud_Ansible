@@ -8,6 +8,9 @@
     - set_fact: nextcloud_url='192.168.2.144'
 
 
+
+
+
 ### Install Dependancies ###
   - name: Install Dependancies
     hosts: localhost
@@ -37,6 +40,7 @@
 
 
 
+
 ### Configuring LAMP Stack ###
   - name: Configure LAMP Stack
     hosts: localhost
@@ -59,6 +63,7 @@
 
 
 
+
 ### Configure MariaDB ###
   - name: Configure Nextcloud Database
     hosts: localhost
@@ -73,6 +78,7 @@
           name: nextclouduser
           password: "{{db_password}}"
           priv: 'nextcloud.*:ALL,GRANT'
+
 
 
 
@@ -95,7 +101,6 @@
 
 
 
-
 ### Configure Firewall ###
   - name: Configure FIrewall
     hosts: localhost
@@ -106,8 +111,6 @@
           permanent: yes
           state: enabled
           immediate: yes
-
-
 
 
 
