@@ -64,7 +64,6 @@
     hosts: localhost
     tasks:
       - name: Create Database
-#        shell: mysql -u root -e "create database nextcloud"
         mysql_db:
           name: nextcloud
           state: present
